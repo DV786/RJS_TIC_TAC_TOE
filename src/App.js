@@ -3,14 +3,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import React, { useState } from "react";
 import Icon from "./componets/icon";
-import { ToastContainer, toast } from "react-toastify";
-import { Card, CardBody, Container, Button, Col, Row } from "reactstrap";
+import { toast } from "react-toastify";
+import { Card, CardBody, Container, Col, Row } from "reactstrap";
 
 const itemArray = new Array(9).fill("empty");
 
 const App = () => {
   const [isCross, setIsCross] = useState(false);
   const [winMessage, setWinMessage] = useState("");
+  const winGameCondition = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+    [0, 4, 8], [2, 4, 6]
+  ];
 
   const reloadGame = () => {
     setIsCross(false);
@@ -18,32 +23,22 @@ const App = () => {
     itemArray.fill("empty", 0, 9);
   };
 
-  const checkWinner = () => {
-    const checkCombination = (a, b, c) => {
-      if (a !== "empty" && a === b && b === c) {
-        setWinMessage(`${a.toUpperCase()} WINS`);
-        return true;
+  const checkWinner = (winningCombinations) => {
+    const checkCombination = (a, b, c) => a !== "empty" && a === b && b === c;
+  
+    for (const combination of winningCombinations) {
+      const [x, y, z] = combination;
+      if (checkCombination(itemArray[x], itemArray[y], itemArray[z])) {
+        setWinMessage(`${itemArray[x].toUpperCase()} WINS`);
+        return;
       }
-      return false;
-    };
-
-    if (
-      checkCombination(itemArray[0], itemArray[1], itemArray[2]) ||
-      checkCombination(itemArray[3], itemArray[4], itemArray[5]) ||
-      checkCombination(itemArray[6], itemArray[7], itemArray[8]) ||
-      checkCombination(itemArray[0], itemArray[3], itemArray[6]) ||
-      checkCombination(itemArray[1], itemArray[4], itemArray[7]) ||
-      checkCombination(itemArray[2], itemArray[5], itemArray[8]) ||
-      checkCombination(itemArray[0], itemArray[4], itemArray[8]) ||
-      checkCombination(itemArray[2], itemArray[4], itemArray[6])
-    ) {
-      return;
     }
-
+  
     if (!itemArray.includes("empty")) {
       setWinMessage("Draw match");
     }
   };
+  
 
   const changeItem = (itemNumber) => {
     if (winMessage) {
@@ -56,13 +51,25 @@ const App = () => {
     } else {
       return toast("Already Filled", { type: "error" });
     }
-    checkWinner();
+    checkWinner(winGameCondition);
   };
-
+  
   return (
     <Container className="p-5">
-      <h1 className="mb-4 text-white">TIC-TAC-TOE GAME</h1>
-      <ToastContainer position="top-right" />
+      <div className="game-title">
+        <h3 className="title-heading">TIC-TAC-TOE GAME</h3>
+      </div>
+      {
+        winMessage &&
+        <div className="main-btn">
+          <button
+            className="reload-game-btn"
+            onClick={reloadGame}
+          >
+            Reload Game
+          </button>
+        </div>
+      }
       <Row>
         <Col md={6} className="offset-md-3">
           <div className="grid">
@@ -83,17 +90,6 @@ const App = () => {
               winMessage ? winMessage : isCross ? "Cross Turn" : "Circle Turn"
             }
           </h1>
-          {
-            winMessage && <Button
-              className="m-0 w-100"
-              color="success"
-              size="sm"
-              // block
-              onClick={reloadGame}
-            >
-              Reload Game
-            </Button>
-          }
         </Col>
       </Row>
     </Container>
