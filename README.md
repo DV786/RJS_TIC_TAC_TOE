@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# Tic-Tac-Toe
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A two-player tic-tac-toe game built with React. Players take turns as circle and cross on a 3x3 board; the game announces a winner or a draw and can be reset with one click.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Two players on one screen, circle goes first
+- Turn indicator ("Circle Turn" / "Cross Turn")
+- Win detection across all 8 lines (rows, columns, diagonals)
+- Draw detection when the board fills with no winner
+- Toast messages for an already-filled cell and for clicks after the game has ended
+- "Reload Game" button to start over once the game ends
 
-### `npm start`
+## Tech stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+| Area | Library |
+| --- | --- |
+| UI | React 19 |
+| Build tooling | Create React App (`react-scripts` 5) |
+| Layout and components | Bootstrap 5, reactstrap 9 |
+| Icons | react-icons 5 |
+| Notifications | react-toastify 11 |
+| Tests | Jest, React Testing Library 16 |
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting started
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js (developed and tested on Node 24)
+- npm
 
-### `npm run build`
+### Install and run
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+git clone https://github.com/DV786/RJS_TIC_TAC_TOE.git
+cd RJS_TIC_TAC_TOE
+npm install
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The app opens at [http://localhost:3000](http://localhost:3000) and reloads when you edit a file.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Scripts
 
-### `npm run eject`
+| Command | What it does |
+| --- | --- |
+| `npm start` | Runs the development server |
+| `npm test` | Runs the tests in watch mode |
+| `npm test -- --watchAll=false` | Runs the tests once |
+| `npm run build` | Creates a production build in `build/` |
+| `npm run eject` | Ejects from Create React App (one-way, not recommended) |
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Project structure
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+public/                 Static HTML shell, manifest, robots.txt
+src/
+  index.js              Entry point: createRoot, ToastContainer, StrictMode
+  App.js                Game board, turn handling, win/draw logic
+  App.css               Board and button styling
+  App.test.js           Game tests
+  componets/icon.js     Renders the circle, cross or empty-cell icon
+  reportWebVitals.js    Optional performance reporting
+  setupTests.js         Jest and jest-dom setup
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## How the game works
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The board is an array of 9 cells, each `"empty"`, `"circle"` or `"cross"`. Clicking an empty cell fills it for the current player and passes the turn. After each move the app checks the 8 winning lines. If none is complete and no cell is empty, the game is a draw. Once the game ends, further clicks only show a toast until **Reload Game** is pressed.
 
-## Learn More
+## Testing
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`src/App.test.js` covers the initial render, alternating turns, filled-cell clicks, circle and cross wins, a draw, locking after a win, and resetting the board.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm test -- --watchAll=false
+```
 
-### Code Splitting
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Create a branch from `main`.
+2. Make your change and run `npm test -- --watchAll=false` and `npm run build`.
+3. Open a pull request.
 
-### Analyzing the Bundle Size
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Create React App is no longer maintained. Most remaining `npm audit` findings come from its build tooling and do not ship in the built app. Moving to Vite would remove them.
+- The board state lives in a module-level array in `App.js` rather than in React state. The tests reset it between runs.
