@@ -8,7 +8,7 @@ import App from "./App";
 const game = (name, run) =>
   test(name, () => {
     const { container } = render(<App />);
-    const cells = container.querySelectorAll(".card");
+    const cells = container.querySelectorAll(".cell");
     const play = (...indexes) =>
       indexes.forEach((i) => fireEvent.click(cells[i]));
 
@@ -40,6 +40,7 @@ game("ignores a click on an already filled cell", ({ play }) => {
   play(0, 0);
 
   expect(screen.getByText("Cross Turn")).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("Already filled");
 });
 
 game("announces circle as the winner and offers a reload", ({ play }) => {
@@ -71,6 +72,7 @@ game("stops accepting moves once the game is won", ({ play }) => {
   play(5, 6);
 
   expect(screen.getByText("CIRCLE WINS")).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("Game over");
 });
 
 game("reload game resets the board and the turn", ({ play }) => {

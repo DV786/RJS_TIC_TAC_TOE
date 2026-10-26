@@ -1,98 +1,83 @@
-import "react-toastify/dist/ReactToastify.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import React, { useState } from "react";
+import { useState } from "react";
 import Icon from "./components/Icon";
-import { toast } from "react-toastify";
-import { Card, CardBody, Container, Col, Row } from "reactstrap";
 
 const itemArray = new Array(9).fill("empty");
+
+const winGameCondition = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6],
+];
 
 const App = () => {
   const [isCross, setIsCross] = useState(false);
   const [winMessage, setWinMessage] = useState("");
-  const winGameCondition = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], 
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], 
-    [0, 4, 8], [2, 4, 6]
-  ];
+  const [notice, setNotice] = useState("");
 
   const reloadGame = () => {
     setIsCross(false);
     setWinMessage("");
+    setNotice("");
     itemArray.fill("empty", 0, 9);
   };
 
-  const checkWinner = (winningCombinations) => {
+  const checkWinner = () => {
     const checkCombination = (a, b, c) => a !== "empty" && a === b && b === c;
-  
-    for (const combination of winningCombinations) {
-      const [x, y, z] = combination;
+
+    for (const [x, y, z] of winGameCondition) {
       if (checkCombination(itemArray[x], itemArray[y], itemArray[z])) {
         setWinMessage(`${itemArray[x].toUpperCase()} WINS`);
         return;
       }
     }
-  
+
     if (!itemArray.includes("empty")) {
       setWinMessage("Draw match");
     }
   };
-  
 
   const changeItem = (itemNumber) => {
     if (winMessage) {
-      return toast(winMessage, { type: "success" });
+      return setNotice("Game over - press Reload Game");
     }
 
-    if (itemArray[itemNumber] === "empty") {
-      itemArray[itemNumber] = isCross ? "cross" : "circle";
-      setIsCross(!isCross);
-    } else {
-      return toast("Already Filled", { type: "error" });
+    if (itemArray[itemNumber] !== "empty") {
+      return setNotice("Already filled");
     }
-    checkWinner(winGameCondition);
+
+    itemArray[itemNumber] = isCross ? "cross" : "circle";
+    setIsCross(!isCross);
+    setNotice("");
+    checkWinner();
   };
-  
+
   return (
-    <Container className="p-5">
-      <div className="game-title">
-        <h3 className="title-heading">TIC-TAC-TOE GAME</h3>
-      </div>
-      {
-        winMessage &&
-        <div className="main-btn">
+    <main className="game">
+      <h1 className="title-heading">TIC-TAC-TOE GAME</h1>
+      {winMessage && (
+        <button className="reload-game-btn" onClick={reloadGame}>
+          Reload Game
+        </button>
+      )}
+      <div className="grid">
+        {itemArray.map((item, index) => (
           <button
-            className="reload-game-btn"
-            onClick={reloadGame}
+            type="button"
+            className="cell"
+            key={index}
+            aria-label={`Cell ${index + 1}, ${item}`}
+            onClick={() => changeItem(index)}
           >
-            Reload Game
+            <Icon name={item} />
           </button>
-        </div>
-      }
-      <Row>
-        <Col md={6} className="offset-md-3">
-          <div className="grid">
-            {itemArray.map((item, index) => (
-              <Card color="warning" key={index} onClick={() => changeItem(index)}>
-                <CardBody className="box">
-                  <Icon name={item} />
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={6} className="offset-md-3">
-          <h1 className="text-center text-warning">
-            {
-              winMessage ? winMessage : isCross ? "Cross Turn" : "Circle Turn"
-            }
-          </h1>
-        </Col>
-      </Row>
-    </Container>
+        ))}
+      </div>
+      <p className="notice" role="status">{notice}</p>
+      <h2 className="status">
+        {winMessage ? winMessage : isCross ? "Cross Turn" : "Circle Turn"}
+      </h2>
+    </main>
   );
 };
 
