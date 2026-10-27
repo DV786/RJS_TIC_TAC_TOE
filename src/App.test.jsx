@@ -15,10 +15,10 @@ const game = (name, run) =>
   });
 
 game("renders the title, an empty 3x3 board and the first turn", ({ cells }) => {
-  expect(screen.getByText("TIC-TAC-TOE GAME")).toBeInTheDocument();
+  expect(screen.getByText("TIC-TAC-TOE")).toBeInTheDocument();
   expect(cells).toHaveLength(9);
   expect(screen.getByText("Circle Turn")).toBeInTheDocument();
-  expect(screen.queryByText("Reload Game")).not.toBeInTheDocument();
+  expect(screen.queryByText("Play again")).not.toBeInTheDocument();
 });
 
 game("alternates turns between circle and cross", ({ play }) => {
@@ -41,7 +41,7 @@ game("announces circle as the winner and offers a reload", ({ play }) => {
   play(0, 3, 1, 4, 2);
 
   expect(screen.getByText("CIRCLE WINS")).toBeInTheDocument();
-  expect(screen.getByText("Reload Game")).toBeInTheDocument();
+  expect(screen.getByText("Play again")).toBeInTheDocument();
 });
 
 game("announces cross as the winner", ({ play }) => {
@@ -68,13 +68,13 @@ game("stops accepting moves once the game is won", ({ play }) => {
   expect(screen.getByRole("status")).toHaveTextContent("Game over");
 });
 
-game("reload game resets the board and the turn", ({ play }) => {
+game("Play again resets the board and the turn", ({ play }) => {
   play(0, 3, 1, 4, 2);
-  fireEvent.click(screen.getByText("Reload Game"));
+  fireEvent.click(screen.getByText("Play again"));
 
   expect(screen.getByText("Circle Turn")).toBeInTheDocument();
   expect(screen.queryByText("CIRCLE WINS")).not.toBeInTheDocument();
-  expect(screen.queryByText("Reload Game")).not.toBeInTheDocument();
+  expect(screen.queryByText("Play again")).not.toBeInTheDocument();
 
   // the previously used cell is playable again
   play(0);

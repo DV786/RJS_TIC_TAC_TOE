@@ -1,6 +1,8 @@
-import "./App.css";
 import { useState } from "react";
-import Icon from "./components/Icon";
+import Board from "./components/Board";
+import Header from "./components/Header";
+import ScoreBoard from "./components/ScoreBoard";
+import StatusBar from "./components/StatusBar";
 
 const emptyBoard = () => new Array(9).fill("empty");
 
@@ -33,7 +35,7 @@ const App = () => {
 
   const changeItem = (itemNumber) => {
     if (winMessage) {
-      return setNotice("Game over - press Reload Game");
+      return setNotice("Game over - Press Play again");
     }
 
     if (board[itemNumber] !== "empty") {
@@ -46,31 +48,25 @@ const App = () => {
     setNotice("");
   };
 
+
   return (
-    <main className="game">
-      <h1 className="title-heading">TIC-TAC-TOE GAME</h1>
+    <main className="flex min-h-dvh flex-col items-center gap-4 px-4 py-8">
+      <Header />
+      <ScoreBoard />
+      <Board board={board} onCellClick={changeItem} />
+      <StatusBar 
+        status={winMessage || (isCross ? "Cross Turn" : "Circle Turn")}
+        notice={notice}
+      />
       {winMessage && (
-        <button className="reload-game-btn" onClick={reloadGame}>
-          Reload Game
+        <button
+          type="button"
+          onClick={reloadGame}
+          className="cursor-pointer rounded-md bg-btn px-5 py-2 text-[13px] font-medium text-btn-ink hover:opacity-90"
+        >
+          Play again
         </button>
       )}
-      <div className="grid">
-        {board.map((item, index) => (
-          <button
-            type="button"
-            className="cell"
-            key={index}
-            aria-label={`Cell ${index + 1}, ${item}`}
-            onClick={() => changeItem(index)}
-          >
-            <Icon name={item} />
-          </button>
-        ))}
-      </div>
-      <p className="notice" role="status">{notice}</p>
-      <h2 className="status">
-        {winMessage ? winMessage : isCross ? "Cross Turn" : "Circle Turn"}
-      </h2>
     </main>
   );
 };
