@@ -2,9 +2,8 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
 
-// App keeps the board in a module-level array, so it survives between
-// tests. `game` runs a test and then clears the board: it fills any empty
-// cells to end a game in progress and presses "Reload Game".
+// `game` renders a fresh game and gives the test the nine cells and a
+// `play(...indexes)` helper that clicks them in order.
 const game = (name, run) =>
   test(name, () => {
     render(<App />);
@@ -12,13 +11,7 @@ const game = (name, run) =>
     const play = (...indexes) =>
       indexes.forEach((i) => fireEvent.click(cells[i]));
 
-    try {
-      run({ cells, play });
-    } finally {
-      cells.forEach((cell) => fireEvent.click(cell));
-      const reload = screen.queryByText("Reload Game");
-      if (reload) fireEvent.click(reload);
-    }
+    run({ cells, play });
   });
 
 game("renders the title, an empty 3x3 board and the first turn", ({ cells }) => {

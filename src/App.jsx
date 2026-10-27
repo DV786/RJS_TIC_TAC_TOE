@@ -2,7 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import Icon from "./components/Icon";
 
-const itemArray = new Array(9).fill("empty");
+const emptyBoard = () => new Array(9).fill("empty");
 
 const winGameCondition = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -10,31 +10,25 @@ const winGameCondition = [
   [0, 4, 8], [2, 4, 6],
 ];
 
+const getResult = (board) => {
+  for (const [x, y, z] of winGameCondition) {
+    if (board[x] !== "empty" && board[x] === board[y] && board[y] === board[z]) {
+      return `${board[x].toUpperCase()} WINS`;
+    }
+  }
+  return board.includes("empty") ? "" : "Draw match";
+};
+
 const App = () => {
-  const [isCross, setIsCross] = useState(false);
-  const [winMessage, setWinMessage] = useState("");
+  const [board, setBoard] = useState(emptyBoard);
   const [notice, setNotice] = useState("");
 
+  const winMessage = getResult(board);
+  const isCross = board.filter((cell) => cell !== "empty").length % 2 === 1;
+
   const reloadGame = () => {
-    setIsCross(false);
-    setWinMessage("");
+    setBoard(emptyBoard());
     setNotice("");
-    itemArray.fill("empty", 0, 9);
-  };
-
-  const checkWinner = () => {
-    const checkCombination = (a, b, c) => a !== "empty" && a === b && b === c;
-
-    for (const [x, y, z] of winGameCondition) {
-      if (checkCombination(itemArray[x], itemArray[y], itemArray[z])) {
-        setWinMessage(`${itemArray[x].toUpperCase()} WINS`);
-        return;
-      }
-    }
-
-    if (!itemArray.includes("empty")) {
-      setWinMessage("Draw match");
-    }
   };
 
   const changeItem = (itemNumber) => {
@@ -42,14 +36,14 @@ const App = () => {
       return setNotice("Game over - press Reload Game");
     }
 
-    if (itemArray[itemNumber] !== "empty") {
+    if (board[itemNumber] !== "empty") {
       return setNotice("Already filled");
     }
 
-    itemArray[itemNumber] = isCross ? "cross" : "circle";
-    setIsCross(!isCross);
+    setBoard(board.map((cell, index) =>
+      index === itemNumber ? (isCross ? "cross" : "circle") : cell
+    ));
     setNotice("");
-    checkWinner();
   };
 
   return (
@@ -61,7 +55,7 @@ const App = () => {
         </button>
       )}
       <div className="grid">
-        {itemArray.map((item, index) => (
+        {board.map((item, index) => (
           <button
             type="button"
             className="cell"
