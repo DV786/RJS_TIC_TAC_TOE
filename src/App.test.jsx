@@ -7,8 +7,8 @@ import App from "./App";
 // cells to end a game in progress and presses "Reload Game".
 const game = (name, run) =>
   test(name, () => {
-    const { container } = render(<App />);
-    const cells = container.querySelectorAll(".cell");
+    render(<App />);
+    const cells = screen.getAllByRole("button", { name: /^Cell/ });
     const play = (...indexes) =>
       indexes.forEach((i) => fireEvent.click(cells[i]));
 
