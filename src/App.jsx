@@ -50,11 +50,19 @@ const App = () => {
 
 
   return (
-    <main className="flex min-h-dvh flex-col items-center gap-4 px-4 py-8">
-      <Header />
-      <ScoreBoard />
-      <Board board={board} onCellClick={changeItem} />
-      <StatusBar 
+    <main 
+      className="flex min-h-dvh flex-col items-center justify-center gap-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1.5rem,env(safe-area-inset-bottom))] py-6 sm:py-10 phone-landscape:py-4"
+    >
+    <div className="grid w-[min(100%,32rem,60dvh)] gap-4 md:gap-6 phone-landscape:w-full phone-landscape:max-w-3xl phone-landscape:grid-cols-[auto_1fr] phone-landscape:items-center phone-landscape:gap-x-6">
+      <Header className="phone-landscape:col-start-2" />
+      <ScoreBoard className="phone-landscape:col-start-2" />
+      <Board 
+        board={board} 
+        onCellClick={changeItem}
+        className="phone-landscape:col-start-1 phone-landscape:row-start-1 phone-landscape:row-span-4 phone-landscape:w-[calc(100dvh-2rem)]"
+      />
+      <StatusBar
+        className="phone-landscape:col-start-2"
         status={winMessage || (isCross ? "Cross Turn" : "Circle Turn")}
         notice={notice}
       />
@@ -62,11 +70,12 @@ const App = () => {
         <button
           type="button"
           onClick={reloadGame}
-          className="cursor-pointer rounded-md bg-btn px-5 py-2 text-[13px] font-medium text-btn-ink hover:opacity-90"
+          className="cursor-pointer justify-self-center rounded-md bg-btn px-5 min-h-11 text-[13px] font-medium text-btn-ink hover:opacity-90 phone-landscape:col-start-2 phone-landscape:justify-self-stretch"
         >
           Play again
         </button>
       )}
+    </div>
     </main>
   );
 };

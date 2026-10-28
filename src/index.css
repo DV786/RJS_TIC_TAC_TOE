@@ -35,6 +35,8 @@
   --pill-ink: #cbd5e1;
 }
 
+@custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 32rem));
+
 @theme inline {
   --color-page: var(--page);
   --color-cell: var(--cell);
